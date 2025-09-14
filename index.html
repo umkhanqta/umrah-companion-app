@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Umrah Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        .arabic-text {
+            font-family: 'Scheherazade New', serif;
+            font-size: 1.5rem;
+            text-align: right;
+            line-height: 2.5rem;
+        }
+        .rotated {
+            transform: rotate(45deg);
+        }
+        [hidden] {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 lg:p-8 bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col items-center">
+        <h1 class="text-3xl font-bold text-center text-teal-600 mb-2">Umrah Companion</h1>
+        <p class="text-sm text-gray-500 text-center mb-6">Your personal guide to sacred places and supplications.</p>
+
+        <!-- User Info -->
+        <div id="user-info" class="mb-6 w-full text-center">
+            <div id="user-name-display" class="w-full break-all text-xs text-gray-600 bg-gray-50 p-2 rounded-lg mt-1">... loading ...</div>
+        </div>
+
+        <!-- Tabbed Navigation -->
+        <div class="w-full flex justify-center mb-6 border-b border-gray-200">
+            <button id="makkah-tab-btn" class="flex-1 py-3 px-4 text-sm font-medium text-center text-gray-600 border-b-2 border-transparent transition-colors duration-300 hover:text-teal-600 hover:border-teal-600 focus:outline-none">
+                Makkah
+            </button>
+            <button id="madinah-tab-btn" class="flex-1 py-3 px-4 text-sm font-medium text-center text-gray-600 border-b-2 border-transparent transition-colors duration-300 hover:text-teal-600 hover:border-teal-600 focus:outline-none">
+                Madinah
+            </button>
+            <button id="steps-tab-btn" class="flex-1 py-3 px-4 text-sm font-medium text-center text-gray-600 border-b-2 border-transparent transition-colors duration-300 hover:text-teal-600 hover:border-teal-600 focus:outline-none">
+                Umrah Steps
+            </button>
+        </div>
+
+        <!-- Makkah Tab Content -->
+        <div id="makkah-content" class="w-full space-y-8" hidden>
+            <!-- Ziyarah Section -->
+            <div class="w-full">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Makkah Ziyarah (مکہ کی زیارات)</h2>
+                <p class="text-gray-500 mb-4 text-sm">Sacred places to visit in Makkah.</p>
+                <div id="makkah-ziyarah-list" class="space-y-4">
+                    <!-- Makkah Ziyarah items will be rendered here -->
+                </div>
+            </div>
+            <!-- Duas Section -->
+            <div class="w-full">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Makkah Duas (مکہ کی دعائیں)</h2>
+                <p class="text-gray-500 mb-4 text-sm">Essential supplications for your journey in Makkah.</p>
+                <div id="makkah-duas-list" class="space-y-4">
+                    <!-- Makkah Duas items will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Madinah Tab Content -->
+        <div id="madinah-content" class="w-full space-y-8" hidden>
+            <!-- Ziyarah Section -->
+            <div class="w-full">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Madinah Ziyarah (مدینہ کی زیارات)</h2>
+                <p class="text-gray-500 mb-4 text-sm">Sacred places to visit in Madinah.</p>
+                <div id="madinah-ziyarah-list" class="space-y-4">
+                    <!-- Madinah Ziyarah items will be rendered here -->
+                </div>
+            </div>
+            <!-- Duas Section -->
+            <div class="w-full">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Madinah Duas (مدینہ کی دعائیں)</h2>
+                <p class="text-gray-500 mb-4 text-sm">Essential supplications for your journey in Madinah.</p>
+                <div id="madinah-duas-list" class="space-y-4">
+                    <!-- Madinah Duas items will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Umrah Steps Tab Content -->
+        <div id="steps-content" class="w-full space-y-8" hidden>
+            <div class="w-full">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Umrah Steps (عمرہ کے مراحل)</h2>
+                <p class="text-gray-500 mb-4 text-sm">A step-by-step guide to performing Umrah.</p>
+                <div id="umrah-steps-list" class="space-y-4">
+                    <!-- Umrah Steps items will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <button id="add-shared-button" class="mt-6 w-full py-3 px-4 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-xl shadow-md transition-colors">
+            Add a New Shared Item
+        </button>
+
+        <!-- Modal for adding/editing items -->
+        <div id="item-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all duration-300 scale-95">
+                <h3 id="modal-title" class="text-2xl font-semibold text-gray-800 mb-4">Add Item</h3>
+                <form id="item-form" class="space-y-4">
+                    <div>
+                        <label for="item-type" class="block text-sm font-medium text-gray-700">Type</label>
+                        <select id="item-type" name="type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                            <option value="dua">Dua</option>
+                            <option value="ziyarah">Ziyarah Place</option>
+                            <option value="umrah_step">Umrah Step</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="item-location" class="block text-sm font-medium text-gray-700">Location</label>
+                        <select id="item-location" name="location" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                            <option value="makkah">Makkah</option>
+                            <option value="madinah">Madinah</option>
+                            <option value="general">General</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="item-title" class="block text-sm font-medium text-gray-700">Title</label>
+                        <input type="text" id="item-title" name="title" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                    </div>
+                    <div>
+                        <label for="item-content" class="block text-sm font-medium text-gray-700">Content</label>
+                        <textarea id="item-content" name="content" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"></textarea>
+                    </div>
+                    <div>
+                        <label for="item-image" class="block text-sm font-medium text-gray-700">Image URL</label>
+                        <input type="url" id="item-image" name="image" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500" placeholder="e.g., https://placehold.co/600x400">
+                    </div>
+                    <div>
+                        <label for="item-link" class="block text-sm font-medium text-gray-700">Link URL</label>
+                        <input type="url" id="item-link" name="link" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500" placeholder="e.g., https://example.com or a YouTube link">
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" id="cancel-modal-button" class="py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
+                        <button type="submit" id="save-item-button" class="py-2 px-4 bg-teal-500 hover:bg-teal-600 text-white rounded-lg text-sm font-medium transition-colors">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Welcome Modal for user name input -->
+        <div id="welcome-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-[100] hidden">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Welcome!</h3>
+                <form id="user-name-form" class="space-y-4">
+                    <div>
+                        <label for="user-name-input" class="block text-sm font-medium text-gray-700">Please enter your name:</label>
+                        <input type="text" id="user-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="py-2 px-4 bg-teal-500 hover:bg-teal-600 text-white rounded-lg text-sm font-medium transition-colors">Start</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Notification container -->
+        <div id="notification-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, setDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase global variables provided by the environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Core variables
+        let db;
+        let auth;
+        let userName = localStorage.getItem('umrahCompanionUserName') || '';
+        let state = {
+            userId: null,
+            currentItems: [],
+            currentTab: 'makkah'
+        };
+
+        // UI Elements
+        const makkahZiyarahList = document.getElementById('makkah-ziyarah-list');
+        const makkahDuasList = document.getElementById('makkah-duas-list');
+        const madinahZiyarahList = document.getElementById('madinah-ziyarah-list');
+        const madinahDuasList = document.getElementById('madinah-duas-list');
+        const umrahStepsList = document.getElementById('umrah-steps-list');
+        const addSharedButton = document.getElementById('add-shared-button');
+        const userNameDisplay = document.getElementById('user-name-display');
+        const modal = document.getElementById('item-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const itemForm = document.getElementById('item-form');
+        const cancelButton = document.getElementById('cancel-modal-button');
+        const makkahTabBtn = document.getElementById('makkah-tab-btn');
+        const madinahTabBtn = document.getElementById('madinah-tab-btn');
+        const stepsTabBtn = document.getElementById('steps-tab-btn');
+        const makkahContent = document.getElementById('makkah-content');
+        const madinahContent = document.getElementById('madinah-content');
+        const stepsContent = document.getElementById('steps-content');
+        const welcomeModal = document.getElementById('welcome-modal');
+        const userNameForm = document.getElementById('user-name-form');
+        const userNameInput = document.getElementById('user-name-input');
+        const notificationContainer = document.getElementById('notification-container');
+
+        // Pre-populated data with Arabic and Urdu content
+        const initialData = [
+            { type: 'dua', location: 'makkah', order: 1, title: 'Talbiyah (تلبیہ)', content: "<b>Arabic:</b><br>لَبَّيْكَ ٱللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ ٱلْحَمْدَ وَٱلنِّعْمَةَ لَكَ وَٱلْمُلْكَ، لَا شَرِيكَ لَكَ<br><br><b>Urdu:</b><br>میں حاضر ہوں، اے اللہ، میں حاضر ہوں، تیرا کوئی شریک نہیں، میں حاضر ہوں، بے شک تمام تعریفیں اور نعمتیں تیرے ہی لیے ہیں، اور بادشاہی بھی، تیرا کوئی شریک نہیں ہے۔<br><br><b>English:</b><br>I am here at your service, O Allah, I am here. There is no partner for you, I am here. Indeed, all praise, grace, and sovereignty belong to you. There is no partner for you.", image: '', link: '' },
+            { type: 'dua', location: 'makkah', order: 2, title: 'Dua Upon Sighting the Kaaba (کعبہ کو دیکھتے ہی دعا)', content: "<b>Arabic:</b><br>اَللّٰهُمَّ زِدْ هَذَا الْبَيْتَ تَشْرِيْفاً وَتَعْظِيْمًا وَتَكْرِيمًا وَمَهَابَةً، وَزِدْ مَنْ شَرَّفَهُ وَعَظَّمَهُ وَكَرَّمَهُ مِمَّنْ حَجَّهُ أَوِ اعْتَمَرَهُ تَشْرِيْفاً وَتَعْظِيمًا وَتَكْرِيْمًا وَبِرًّا<br><br><b>Urdu:</b><br>اے اللہ، اس گھر کو شرف، عظمت، اور ہیبت میں اور زیادہ کر دے، اور جو اس کی تعظیم اور تکریم کرے، ان میں سے جو حج یا عمرہ کرے ان کو بھی مزید شرف، عظمت، اور نیکیاں عطا فرما۔<br><br><b>English:</b><br>O Allah, increase this House in honour, esteem, reverence and awe, and increase those who honour and revere it, of those who perform Hajj or Umrah, in honour, esteem, reverence and piety.", image: '', link: '' },
+            { type: 'dua', location: 'makkah', order: 3, title: 'Dua Between the Yemeni Corner and the Black Stone (يمنی رُکن اور حجر اسود کے درمیان کی دعا)', content: "<b>Arabic:</b><br>رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ<br><br><b>Urdu:</b><br>اے ہمارے رب! ہمیں دنیا میں بھی بھلائی عطا فرما اور آخرت میں بھی بھلائی عطا فرما اور ہمیں آگ کے عذاب سے بچا۔<br><br><b>English:</b><br>Our Lord, give us good in this world and good in the Hereafter, and save us from the punishment of the Fire.", image: '', link: '' },
+            { type: 'ziyarah', location: 'makkah', order: 1, title: 'Jabal al-Nour (غار حرا)', content: "<b>Urdu:</b><br>یہ 'نور کا پہاڑ' ہے، جس کی چوٹی پر غار حرا واقع ہے جہاں رسول اللہ ﷺ پر پہلی وحی نازل ہوئی۔<br><br><b>English:</b><br>This is the 'Mountain of Light' where the Cave of Hira is located, the place where the Prophet Muhammad (PBUH) received his first revelation.", image: 'https://placehold.co/600x400/5C6BC0/FFFFFF?text=Jabal+al-Nour', link: 'https://www.youtube.com/watch?v=1F_454F4G6C' },
+            { type: 'ziyarah', location: 'makkah', order: 2, title: 'Jabal al-Thawr (غار ثور)', content: "<b>Urdu:</b><br>یہ وہ غار ہے جہاں ہجرت کے دوران رسول اللہ ﷺ اور حضرت ابوبکر صدیق رضی اللہ عنہ نے قریش سے چھپ کر پناہ لی تھی۔<br><br><b>English:</b><br>This is the cave where the Prophet Muhammad (PBUH) and Abu Bakr (RA) hid from the Quraysh during the Hijrah to Medina.", image: '', link: '' },
+            { type: 'ziyarah', location: 'makkah', order: 3, title: 'Jannat al-Mu\'alla (جنت المعلى)', content: "<b>Urdu:</b><br>یہ مکہ کا تاریخی قبرستان ہے جہاں رسول اللہ ﷺ کے خاندان اور قریبی صحابہ کرام مدفون ہیں، جن میں ام المومنین حضرت خدیجہ (رضی اللہ عنہا) بھی شامل ہیں۔<br><br><b>English:</b><br>The historic cemetery in Makkah where many of the Prophet's family and companions are buried, including his first wife Khadijah (RA).", image: '', link: '' },
+            { type: 'ziyarah', location: 'madinah', order: 1, title: 'Masjid al-Nabawi (مسجد نبوی)', content: "<b>Urdu:</b><br>مدینہ منورہ میں واقع مسجد نبوی، اسلام کا دوسرا مقدس ترین مقام ہے، جسے رسول اللہ ﷺ نے خود بنایا تھا۔ یہاں روضہ مبارک ہے، جہاں رسول اللہ ﷺ اور ان کے صحابہ کرام آرام فرما رہے ہیں۔<br><br><b>English:</b><br>Located in Medina, Masjid al-Nabawi is the second holiest site in Islam. It is the home of the Rawdah Mubarak, where the Prophet and his companions are laid to rest.", image: '', link: '' },
+            { type: 'ziyarah', location: 'madinah', order: 2, title: 'Jabal Uhud (جبل احد)', content: "<b>Urdu:</b><br>مدینہ سے شمال کی جانب واقع، جبل احد وہ پہاڑ ہے جہاں احد کی جنگ لڑی گئی تھی۔ یہ وہ جگہ ہے جہاں شہداء کی قبریں ہیں، جن میں نبی اکرم ﷺ کے پیارے چچا حمزہ (رضی اللہ عنہ) بھی شامل ہیں۔<br><br><b>English:</b><br>Located north of Medina, Jabal Uhud is the mountain where the Battle of Uhud took place. It is the burial place of the martyrs of that battle.", image: '', link: '' },
+            { type: 'ziyarah', location: 'madinah', order: 3, title: 'Masjid Quba (مسجد قبا)', content: "<b>Urdu:</b><br>مسجد قبا اسلام کی پہلی مسجد ہے، جسے ہجرت کے بعد رسول اللہ ﷺ نے مدینہ کے قریب بنایا تھا۔ یہاں دو رکعت نماز پڑھنے کا ثواب ایک عمرے کے برابر ہے۔<br><br><b>English:</b><br>Masjid Quba is the first mosque built in Islam, constructed by the Prophet (PBUH) on his arrival in Medina. Praying two rak'ahs here is equivalent in reward to performing an Umrah.", image: '', link: '' },
+            { type: 'dua', location: 'madinah', order: 1, title: 'Dua upon entering Masjid al-Nabawi (مسجد نبوی میں داخلے کی دعا)', content: "<b>Arabic:</b><br>اَللّٰهُمَّ افْتَحْ لِيْ أَبْوَابَ رَحْمَتِكَ<br><br><b>Urdu:</b><br>اے اللہ! میرے لئے اپنی رحمت کے دروازے کھول دے۔<br><br><b>English:</b><br>O Allah, open the gates of Your mercy for me.", image: '', link: '' },
+            { type: 'dua', location: 'madinah', order: 2, title: 'Dua at the grave of Prophet Muhammad (ﷺ)', content: "<b>Arabic:</b><br>اَلسَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللّٰهِ وَبَرَكَاتُهُ<br><br><b>Urdu:</b><br>آپ پر سلام ہو اے نبی، اور اللہ کی رحمت اور برکتیں ہوں۔<br><br><b>English:</b><br>Peace be upon you, O Prophet, and the mercy of Allah and His blessings.", image: '', link: '' },
+            { type: 'umrah_step', location: 'general', order: 1, title: 'Step 1: Ihram (احرام)', content: "<b>Urdu:</b><br>احرام وہ خاص حالت ہے جس میں عمرہ کرنے والا مخصوص لباس پہنتا ہے اور اس کے لیے کچھ پابندیاں لازم ہو جاتی ہیں۔ احرام کی نیت کرنے کے بعد تلبیہ پڑھنا شروع کر دیں۔<br><br><b>English:</b><br>Ihram is a sacred state a pilgrim enters by putting on a special dress and making the intention to perform Umrah. After making your intention, begin reciting the Talbiyah.", image: '', link: '' },
+            { type: 'umrah_step', location: 'general', order: 2, title: 'Step 2: Tawaf (طواف)', content: "<b>Urdu:</b><br>یہ خانہ کعبہ کے گرد سات چکر لگانے کا عمل ہے۔ طواف حجر اسود سے شروع ہوتا ہے اور ہر چکر پر حجر اسود کا بوسہ یا اشارہ کیا جاتا ہے۔<br><br><b>English:</b><br>Tawaf is the ritual of circumambulating the Kaaba seven times. It begins at the Black Stone, and you should kiss or point to it at the start of each circuit.", image: '', link: '' },
+            { type: 'umrah_step', location: 'general', order: 3, title: 'Step 3: Sa’i (سعی)', content: "<b>Urdu:</b><br>صہفہ اور مروہ کے درمیان سات بار چلنا سعی کہلاتا ہے، جو حضرت ہاجرہ کی سنت ہے۔ یہ صہفہ سے شروع ہوتا ہے اور مروہ پر ختم ہوتا ہے۔<br><br><b>English:</b><br>Sa’i is the act of walking seven times between the hills of Safa and Marwah, a tradition of Hagar (AS). It begins at Safa and ends at Marwah.", image: '', link: '' },
+            { type: 'umrah_step', location: 'general', order: 4, title: 'Step 4: Halq or Taqsir (حلق یا تقصیر)', content: "<b>Urdu:</b><br>یہ سر کے بال منڈوانے (حلق) یا چھوٹے کروانے (تقصیر) کا عمل ہے، جو عمرہ کے احرام سے باہر آنے کے لیے ضروری ہے۔ مردوں کے لیے حلق افضل ہے جبکہ عورتوں کے لیے صرف تقصیر کی جاتی ہے۔<br><br><b>English:</b><br>This is the act of shaving (Halq) or trimming (Taqsir) the hair, which is necessary to complete your state of Ihram. Halq is preferred for men, while women only trim a small portion of their hair.", image: '', link: '' },
+            { type: 'umrah_step', location: 'general', order: 5, title: 'Dua After Drinking Zamzam Water (زمزم کے بعد کی دعا)', content: "<b>Arabic:</b><br>اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا وَاسِعًا وَشِفَاءً مِنْ كُلِّ دَاءٍ<br><br><b>Urdu:</b><br>اے اللہ، میں تجھ سے نفع بخش علم، کشادہ رزق، اور ہر بیماری سے شفا کا سوال کرتا ہوں۔<br><br><b>English:</b><br>O Allah, I ask You for beneficial knowledge, abundant provision, and a cure from every disease.", image: 'https://placehold.co/600x400/008080/FFFFFF?text=Zamzam+Water', link: 'https://www.youtube.com/watch?v=cM35P74kYgA' },
+        ];
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        // Authentication and Firestore setup
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                state.userId = user.uid;
+                if (!userName) {
+                    welcomeModal.classList.remove('hidden');
+                } else {
+                    userNameDisplay.textContent = `Welcome, ${userName}!`;
+                    setupFirestoreListeners();
+                }
+            } else {
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                }
+            }
+        });
+
+        // Handle user name form submission
+        userNameForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            userName = userNameInput.value.trim();
+            if (userName) {
+                localStorage.setItem('umrahCompanionUserName', userName);
+                welcomeModal.classList.add('hidden');
+                userNameDisplay.textContent = `Welcome, ${userName}!`;
+                setupFirestoreListeners();
+            }
+        });
+
+        // Tab Switching Logic
+        const tabs = {
+            makkah: { btn: makkahTabBtn, content: makkahContent },
+            madinah: { btn: madinahTabBtn, content: madinahContent },
+            steps: { btn: stepsTabBtn, content: stepsContent }
+        };
+
+        const switchTab = (activeTab) => {
+            state.currentTab = activeTab;
+            for (const tab in tabs) {
+                const isActive = tab === activeTab;
+                tabs[tab].btn.classList.toggle('text-teal-600', isActive);
+                tabs[tab].btn.classList.toggle('border-teal-600', isActive);
+                tabs[tab].btn.classList.toggle('text-gray-600', !isActive);
+                tabs[tab].btn.classList.toggle('border-transparent', !isActive);
+                tabs[tab].content.hidden = !isActive;
+            }
+        };
+
+        makkahTabBtn.addEventListener('click', () => switchTab('makkah'));
+        madinahTabBtn.addEventListener('click', () => switchTab('madinah'));
+        stepsTabBtn.addEventListener('click', () => switchTab('steps'));
+        switchTab('makkah'); // Set initial tab
+
+        // Function to set up Firestore listeners
+        let lastUpdateTimestamp = Date.now();
+        const setupFirestoreListeners = () => {
+            const sharedCollectionPath = `artifacts/${appId}/public/data/umrah_items`;
+            const sharedCollectionRef = collection(db, sharedCollectionPath);
+            const sharedQuery = query(sharedCollectionRef);
+
+            onSnapshot(sharedQuery, async (snapshot) => {
+                const updatedItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Check for updates by other users
+                const isFirstLoad = state.currentItems.length === 0 && updatedItems.length > 0;
+                const changes = snapshot.docChanges();
+
+                if (!isFirstLoad) {
+                    changes.forEach(change => {
+                        const item = { id: change.doc.id, ...change.doc.data() };
+                        if (item.userId !== state.userId) {
+                            if (change.type === 'added') {
+                                showNotification(`New item added by ${item.userName}!`);
+                            } else if (change.type === 'modified') {
+                                showNotification(`${item.userName} updated an item.`);
+                            } else if (change.type === 'removed') {
+                                showNotification(`${item.userName} deleted an item.`);
+                            }
+                        }
+                    });
+                }
+                
+                state.currentItems = updatedItems;
+                lastUpdateTimestamp = Date.now();
+
+                // If the collection is empty, add the initial data
+                if (snapshot.empty) {
+                    const batch = writeBatch(db);
+                    initialData.forEach(item => {
+                        const newDocRef = doc(sharedCollectionRef);
+                        batch.set(newDocRef, { ...item, userId: 'initial_data_provider', userName: 'Initial Data', createdAt: serverTimestamp() });
+                    });
+                    await batch.commit();
+                }
+
+                renderLists();
+            }, (error) => {
+                makkahZiyarahList.innerHTML = `<p class="text-center text-red-500 p-4">Error loading data: ${error.message}</p>`;
+            });
+        };
+
+        // Function to show notifications
+        const showNotification = (message) => {
+            const notification = document.createElement('div');
+            notification.className = 'bg-gray-800 text-white text-sm py-2 px-4 rounded-lg shadow-lg transform transition-all duration-300 translate-y-full opacity-0';
+            notification.textContent = message;
+            notificationContainer.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-y-full', 'opacity-0');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.add('translate-y-full', 'opacity-0');
+                notification.addEventListener('transitionend', () => {
+                    notification.remove();
+                });
+            }, 4000);
+        };
+
+        // Function to render all lists based on the current data
+        const renderLists = () => {
+            makkahZiyarahList.innerHTML = '';
+            makkahDuasList.innerHTML = '';
+            madinahZiyarahList.innerHTML = '';
+            madinahDuasList.innerHTML = '';
+            umrahStepsList.innerHTML = '';
+            
+            const makkahItems = state.currentItems.filter(item => item.location === 'makkah').sort((a, b) => a.order - b.order);
+            const madinahItems = state.currentItems.filter(item => item.location === 'madinah').sort((a, b) => a.order - b.order);
+            const umrahSteps = state.currentItems.filter(item => item.type === 'umrah_step').sort((a, b) => a.order - b.order);
+
+            makkahItems.forEach(item => {
+                if (item.type === 'ziyarah') {
+                    renderItem(item, makkahZiyarahList);
+                } else if (item.type === 'dua') {
+                    renderItem(item, makkahDuasList);
+                }
+            });
+
+            madinahItems.forEach(item => {
+                if (item.type === 'ziyarah') {
+                    renderItem(item, madinahZiyarahList);
+                } else if (item.type === 'dua') {
+                    renderItem(item, madinahDuasList);
+                }
+            });
+
+            umrahSteps.forEach(item => {
+                renderItem(item, umrahStepsList);
+            });
+
+            if (makkahZiyarahList.innerHTML === '') makkahZiyarahList.innerHTML = '<p class="text-center text-gray-400 p-4">No Makkah Ziyarah places added yet.</p>';
+            if (makkahDuasList.innerHTML === '') makkahDuasList.innerHTML = '<p class="text-center text-gray-400 p-4">No Makkah Duas added yet.</p>';
+            if (madinahZiyarahList.innerHTML === '') madinahZiyarahList.innerHTML = '<p class="text-center text-gray-400 p-4">No Madinah Ziyarah places added yet.</p>';
+            if (madinahDuasList.innerHTML === '') madinahDuasList.innerHTML = '<p class="text-center text-gray-400 p-4">No Madinah Duas added yet.</p>';
+            if (umrahStepsList.innerHTML === '') umrahStepsList.innerHTML = '<p class="text-center text-gray-400 p-4">No Umrah Steps added yet.</p>';
+        };
+
+        // Function to render a single item
+        const renderItem = (item, parentList) => {
+            const isOwner = item.userId === state.userId;
+            const itemElement = document.createElement('div');
+            let itemColor;
+            let hoverColor;
+            if (item.type === 'ziyarah') {
+                itemColor = 'bg-blue-50';
+                hoverColor = 'group-hover:text-blue-700';
+            } else if (item.type === 'dua') {
+                itemColor = 'bg-teal-50';
+                hoverColor = 'group-hover:text-teal-700';
+            } else if (item.type === 'umrah_step') {
+                itemColor = 'bg-indigo-50';
+                hoverColor = 'group-hover:text-indigo-700';
+            } else {
+                itemColor = 'bg-gray-50';
+                hoverColor = 'group-hover:text-gray-700';
+            }
+            
+            itemElement.className = `p-4 rounded-xl shadow-sm border border-gray-200 ${itemColor} transition-all duration-300 cursor-pointer`;
+            itemElement.innerHTML = `
+                <div class="flex justify-between items-start group">
+                    <h3 class="text-lg font-medium text-gray-900 ${hoverColor}">${item.title}</h3>
+                    <div class="flex space-x-2 items-center">
+                        <span class="text-xs text-gray-400">Posted by: <b>${item.userName || 'Unknown'}</b></span>
+                        ${isOwner ? `
+                            <button class="edit-btn text-sm text-gray-500 hover:text-gray-700 transition-colors" data-id="${item.id}">Edit</button>
+                            <button class="delete-btn text-sm text-red-500 hover:text-red-700 transition-colors" data-id="${item.id}">Delete</button>
+                        ` : ''}
+                        <span class="expand-icon text-xl text-gray-400 transition-transform duration-300 transform group-hover:text-teal-500">+</span>
+                    </div>
+                </div>
+                <div class="item-content hidden pt-4 text-gray-600">
+                    ${item.image ? `<img src="${item.image}" class="w-full rounded-lg mb-4" onerror="this.onerror=null; this.src='https://placehold.co/600x400/CCCCCC/333333?text=Image+Not+Found';">` : ''}
+                    ${item.content}
+                    ${item.link ? `<a href="${item.link}" target="_blank" class="mt-4 inline-block text-blue-500 hover:underline">Read more &rarr;</a>` : ''}
+                </div>
+            `;
+            parentList.appendChild(itemElement);
+
+            itemElement.querySelector('.group').addEventListener('click', () => {
+                const content = itemElement.querySelector('.item-content');
+                const icon = itemElement.querySelector('.expand-icon');
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotated');
+            });
+
+            if (isOwner) {
+                itemElement.querySelector('.edit-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openModal(item.id, item);
+                });
+                itemElement.querySelector('.delete-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteItem(item.id);
+                });
+            }
+        };
+
+        // Modal functionality
+        const openModal = (docId = null, item = null) => {
+            itemForm.reset();
+            itemForm.dataset.docId = docId || '';
+            modalTitle.textContent = docId ? 'Edit Item' : 'Add Item';
+            if (item) {
+                document.getElementById('item-type').value = item.type;
+                document.getElementById('item-location').value = item.location || 'general';
+                document.getElementById('item-title').value = item.title;
+                document.getElementById('item-content').value = item.content;
+                document.getElementById('item-image').value = item.image || '';
+                document.getElementById('item-link').value = item.link || '';
+            }
+            modal.classList.remove('hidden');
+        };
+
+        const closeModal = () => {
+            modal.classList.add('hidden');
+        };
+
+        addSharedButton.addEventListener('click', () => openModal());
+        cancelButton.addEventListener('click', closeModal);
+
+        // Form submission handler
+        itemForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const docId = itemForm.dataset.docId;
+            const formData = new FormData(itemForm);
+            const itemData = Object.fromEntries(formData.entries());
+            const sharedCollectionRef = collection(db, `artifacts/${appId}/public/data/umrah_items`);
+            const lastItem = state.currentItems.slice().sort((a,b) => b.order - a.order)[0];
+            const newOrder = lastItem ? lastItem.order + 1 : 1;
+
+            try {
+                if (docId) {
+                    // Update existing item
+                    const itemRef = doc(db, `artifacts/${appId}/public/data/umrah_items`, docId);
+                    await updateDoc(itemRef, itemData);
+                } else {
+                    // Add new item
+                    await addDoc(sharedCollectionRef, {
+                        ...itemData,
+                        order: newOrder,
+                        userId: state.userId,
+                        userName: userName,
+                        createdAt: serverTimestamp()
+                    });
+                }
+                closeModal();
+            } catch (error) {
+                console.error("Error saving item:", error);
+            }
+        });
+
+        // Delete functionality
+        const deleteItem = async (docId) => {
+            const modalUI = `
+                <div id="confirm-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50">
+                    <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Confirm Deletion</h3>
+                        <p class="text-sm text-gray-600 mb-6">Are you sure you want to delete this item? This action cannot be undone.</p>
+                        <div class="flex justify-end space-x-3">
+                            <button id="cancel-delete-btn" class="py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
+                            <button id="confirm-delete-btn" class="py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalUI);
+
+            const confirmModal = document.getElementById('confirm-modal');
+            const confirmBtn = document.getElementById('confirm-delete-btn');
+            const cancelBtn = document.getElementById('cancel-delete-btn');
+
+            return new Promise((resolve) => {
+                confirmBtn.onclick = async () => {
+                    confirmModal.remove();
+                    try {
+                        await deleteDoc(doc(db, `artifacts/${appId}/public/data/umrah_items`, docId));
+                        resolve(true);
+                    } catch (error) {
+                        console.error("Error deleting item:", error);
+                        resolve(false);
+                    }
+                };
+                cancelBtn.onclick = () => {
+                    confirmModal.remove();
+                    resolve(false);
+                };
+            });
+        };
+    </script>
+</body>
+</html>
