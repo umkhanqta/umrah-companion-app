@@ -179,7 +179,16 @@
 
         // Firebase global variables provided by the environment
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        //const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const firebaseConfig = {
+                  apiKey: "AIzaSyA0c-L3uWyuB1TwVS1I-WOV--MbJxf87JY",
+                  authDomain: "umrah-companion-app.firebaseapp.com",
+                  projectId: "umrah-companion-app",
+                  storageBucket: "umrah-companion-app.firebasestorage.app",
+                  messagingSenderId: "78524775937",
+                  appId: "1:78524775937:web:63b8a74bb0c5eb299cca00",
+                  measurementId: "G-EDHNV413VY"
+                };
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // Core variables
@@ -237,6 +246,7 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         db = getFirestore(app);
         auth = getAuth(app);
 
@@ -558,3 +568,4 @@
     </script>
 </body>
 </html>
+
